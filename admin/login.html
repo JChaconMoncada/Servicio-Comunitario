@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Inscripciones Tardías</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Departamento de Matemática y Física</span>
+            </div>
+            <nav class="nav">
+                <a href="../departamentos.html" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Departamentos
+                </a>
+                <a href="../soporte.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    Soporte
+                </a>
+                <a href="../index.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Iniciando sesión...</p>
+    </div>
+
+    <!-- Alerta para estudiantes -->
+    <div class="student-alert" id="studentAlert">
+        <div class="alert-content">
+            <i class="fas fa-exclamation-triangle"></i>
+            <div class="alert-text">
+                <h3>Atención Estudiantes</h3>
+                <p>Este login es exclusivo para personal administrativo del Departamento de Matemática.</p>
+            </div>
+            <a href="../estudiante/formulario.html" class="btn btn-primary">
+                <i class="fas fa-user-graduate"></i>
+                Si eres estudiante, haz clic aquí
+            </a>
+        </div>
+    </div>
+
+    <!-- Login Form -->
+    <section class="login-section">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="login-header">
+                    <i class="fas fa-user-shield"></i>
+                    <h2>Login Administrativo</h2>
+                    <p>Ingresa tus credenciales para acceder al panel de administración</p>
+                </div>
+                <form class="login-form" id="loginForm">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Correo Electrónico
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="admin@unet.edu.ve" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">
+                            <i class="fas fa-lock"></i>
+                            Contraseña
+                        </label>
+                        <input type="password" id="password" name="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block" id="btnLogin">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Ingresar
+                    </button>
+                </form>
+                <div class="login-footer">
+                    <p>¿Olvidaste tu contraseña? Contacta a soporte técnico.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/auth.js"></script>
+</body>
+</html>

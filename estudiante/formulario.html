@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Estudiante - Inscripciones Tardías</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/estudiante.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Departamento de Matemática y Física</span>
+            </div>
+            <nav class="nav">
+                <a href="../departamentos.html" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Departamentos
+                </a>
+                <a href="../soporte.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    Soporte
+                </a>
+                <a href="../departamento-matematica-fisica.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Volver
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Procesando...</p>
+    </div>
+
+    <!-- Alerta de estado del sistema -->
+    <div class="system-alert" id="systemAlert" style="display: none;">
+        <div class="alert-content">
+            <i class="fas fa-exclamation-circle"></i>
+            <div class="alert-text">
+                <h3>Inscripciones Deshabilitadas</h3>
+                <p>Las inscripciones tardías no están habilitadas en este momento. Por favor, intenta más tarde.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Formulario Section -->
+    <section class="form-section">
+        <div class="container">
+            <div class="form-card">
+                <div class="form-header">
+                    <i class="fas fa-user-graduate"></i>
+                    <h1>Formulario de Inscripción</h1>
+                    <p>Completa tus datos personales para comenzar el proceso de inscripción tardía</p>
+                </div>
+
+                <form class="student-form" id="studentForm">
+                    <div class="form-group">
+                        <label for="cedula">
+                            <i class="fas fa-id-card"></i>
+                            Cédula de Identidad
+                        </label>
+                        <input type="text" id="cedula" name="cedula" placeholder="V-12345678" required>
+                        <small class="form-hint">Formato: V-12345678 o E-12345678</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="nombre">
+                            <i class="fas fa-user"></i>
+                            Nombre Completo
+                        </label>
+                        <input type="text" id="nombre" name="nombre" placeholder="Juan Pérez" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="telefono">
+                            <i class="fas fa-phone"></i>
+                            Teléfono de Contacto
+                        </label>
+                        <input type="tel" id="telefono" name="telefono" placeholder="+58 274 123 4567" required>
+                        <small class="form-hint">Incluye código de área</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i>
+                            Correo Institucional
+                        </label>
+                        <input type="email" id="email" name="email" placeholder="tu.correo@unet.edu.ve" required>
+                        <small class="form-hint">Debe ser tu correo institucional @unet.edu.ve</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="semestre">
+                            <i class="fas fa-layer-group"></i>
+                            Semestre Actual
+                        </label>
+                        <select id="semestre" name="semestre" required>
+                            <option value="">Selecciona tu semestre</option>
+                            <option value="1">1er Semestre</option>
+                            <option value="2">2do Semestre</option>
+                            <option value="3">3er Semestre</option>
+                            <option value="4">4to Semestre</option>
+                            <option value="5">5to Semestre</option>
+                            <option value="6">6to Semestre</option>
+                            <option value="7">7mo Semestre</option>
+                            <option value="8">8vo Semestre</option>
+                            <option value="9">9no Semestre</option>
+                            <option value="10">10mo Semestre</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="btnSubmit">
+                        <i class="fas fa-paper-plane"></i>
+                        Enviar Código de Verificación
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    <p><i class="fas fa-info-circle"></i> Al hacer clic en enviar, recibirás un código de verificación en tu correo institucional.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/estudiante.js"></script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Departamento de Matemática y Física - UNET</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Departamento de Matemática y Física</span>
+            </div>
+            <nav class="nav">
+                <a href="departamentos.html" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Departamentos
+                </a>
+                <a href="soporte.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    Soporte
+                </a>
+                <a href="admin/login.html" class="btn-login">
+                    <i class="fas fa-user-shield"></i>
+                    Admin
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Cargando...</p>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Departamento de Matemática y Física</h1>
+            <h2>Inscripciones Tardías UNET</h2>
+            <p>Sistema de inscripciones tardías para estudiantes del Departamento de Matemática y Física de la Universidad Nacional Experimental del Táchira.</p>
+        </div>
+    </section>
+
+    <!-- Info Section -->
+    <section class="info-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Información del Departamento</h2>
+                <p>Conoce más sobre el proceso de inscripciones tardías</p>
+            </div>
+            <div class="info-cards">
+                <div class="info-card">
+                    <i class="fas fa-file-alt"></i>
+                    <h3>Requisitos</h3>
+                    <p>Cédula de identidad, correo institucional (@unet.edu.ve) y teléfono de contacto activos.</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-clock"></i>
+                    <h3>Periodo</h3>
+                    <p>Las inscripciones tardías estarán disponibles cuando sean habilitadas por administración.</p>
+                </div>
+                <div class="info-card">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Seguridad</h3>
+                    <p>Verificación por correo institucional para garantizar la identidad del estudiante.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Cómo realizar tu inscripción</h2>
+                <p>Sigue estos simples pasos para completar tu inscripción tardía</p>
+            </div>
+            <div class="process-steps">
+                <div class="process-step">
+                    <div class="step-number">1</div>
+                    <h3>Regístrate</h3>
+                    <p>Completa el formulario con tus datos personales y correo institucional.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">2</div>
+                    <h3>Verifica</h3>
+                    <p>Ingresa el código de verificación enviado a tu correo institucional.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">3</div>
+                    <h3>Selecciona</h3>
+                    <p>Elige las materias y secciones que deseas inscribir del departamento.</p>
+                </div>
+                <div class="process-step">
+                    <div class="step-number">4</div>
+                    <h3>Confirma</h3>
+                    <p>Revisa y confirma tu inscripción para completar el proceso.</p>
+                </div>
+            </div>
+            <div class="cta-container">
+                <a href="estudiante/formulario.html" class="btn btn-primary btn-large">
+                    <i class="fas fa-user-graduate"></i>
+                    Comenzar Inscripción
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Contacto del Departamento</h2>
+                <p>¿Necesitas ayuda? Contáctanos</p>
+            </div>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <h3>Teléfono</h3>
+                        <p>+58 274 123 4567</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                        <h3>Correo</h3>
+                        <p>matematica-fisica@unet.edu.ve</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <h3>Ubicación</h3>
+                        <p>Departamento de Matemática y Física, Edificio Principal, UNET</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Departamento de Matemática y Física</h4>
+                    <p>Universidad Nacional Experimental del Táchira</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Enlaces</h4>
+                    <a href="index.html">Inicio</a>
+                    <a href="departamentos.html">Departamentos</a>
+                    <a href="soporte.html">Soporte</a>
+                </div>
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>matematica-fisica@unet.edu.ve</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Universidad Nacional Experimental del Táchira - Departamento de Matemática y Física</p>
+                <p>Todos los derechos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
