@@ -1,0 +1,3 @@
+Grupo 1 - Miguel y Carlos - Encargados del UI del sistema
+Grupo 2 - Omar y Jesus - Encargados del Backend
+Grupo 3 - Francisco y Dios - Encargados del QA
