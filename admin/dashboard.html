@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - Inscripciones Tardías</title>
+    <link rel="stylesheet" href="../css/styles.css">
+    <link rel="stylesheet" href="../css/admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Panel de Administración - Matemática y Física</span>
+            </div>
+            <nav class="nav">
+                <a href="../departamentos.html" class="nav-link">
+                    <i class="fas fa-building"></i>
+                    Departamentos
+                </a>
+                <a href="../soporte.html" class="nav-link">
+                    <i class="fas fa-headset"></i>
+                    Soporte
+                </a>
+                <div class="dashboard-user">
+                    <span id="adminEmail">admin@unet.edu.ve</span>
+                    <button class="btn-logout" id="btnLogout">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar Sesión
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Procesando...</p>
+    </div>
+
+    <!-- Dashboard Content -->
+    <section class="dashboard-section">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Bienvenido al Panel de Administración</h1>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="dashboard-cards">
+                <div class="stat-card">
+                    <i class="fas fa-users"></i>
+                    <div class="stat-card-content">
+                        <h3>Estudiantes Inscritos</h3>
+                        <p id="totalStudents">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-book"></i>
+                    <div class="stat-card-content">
+                        <h3>Materias Activas</h3>
+                        <p id="totalSubjects">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-layer-group"></i>
+                    <div class="stat-card-content">
+                        <h3>Secciones Disponibles</h3>
+                        <p id="totalSections">0</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-toggle-on"></i>
+                    <div class="stat-card-content">
+                        <h3>Estado del Sistema</h3>
+                        <p id="systemStatus">Deshabilitado</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Toggle Inscripciones -->
+            <div class="dashboard-section-card">
+                <h2><i class="fas fa-power-off"></i> Control de Inscripciones</h2>
+                <div class="toggle-container">
+                    <div class="toggle-label">
+                        <i class="fas fa-unlock"></i>
+                        <span>Habilitar Inscripciones</span>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="toggleInscripciones">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i>
+                    Al habilitar las inscripciones, los estudiantes podrán acceder al formulario de inscripción.
+                </p>
+            </div>
+
+            <!-- Import Excel -->
+            <div class="dashboard-section-card">
+                <h2><i class="fas fa-file-excel"></i> Importar Datos de Materias</h2>
+                <div class="import-section" id="importSection">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Arrastra tu archivo Excel aquí o haz clic para seleccionar</p>
+                    <p style="font-size: 0.85rem; color: var(--text-muted);">
+                        El archivo debe contener las columnas: materia, profesor, sección, cupo, horario
+                    </p>
+                    <input type="file" id="fileInput" class="file-input" accept=".xlsx, .xls">
+                    <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                        <i class="fas fa-folder-open"></i>
+                        Seleccionar Archivo
+                    </button>
+                </div>
+                <div id="fileInfo" style="display: none; margin-top: 15px; padding: 15px; background-color: var(--bg-light); border-radius: var(--radius);">
+                    <p><strong>Archivo seleccionado:</strong> <span id="fileName"></span></p>
+                    <button class="btn btn-primary" id="btnProcessExcel" style="margin-top: 10px;">
+                        <i class="fas fa-cogs"></i>
+                        Procesar Archivo
+                    </button>
+                </div>
+            </div>
+
+            <!-- Preview de Materias -->
+            <div class="dashboard-section-card">
+                <h2><i class="fas fa-list"></i> Vista Previa de Materias</h2>
+                <div id="materiasPreview">
+                    <p style="color: var(--text-muted); text-align: center; padding: 40px;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
+                        No hay materias cargadas. Importa un archivo Excel para comenzar.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Inscripciones Recientes -->
+            <div class="dashboard-section-card">
+                <h2><i class="fas fa-history"></i> Inscripciones Recientes</h2>
+                <div id="recentInscriptions">
+                    <p style="color: var(--text-muted); text-align: center; padding: 40px;">
+                        <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
+                        No hay inscripciones recientes.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/auth.js"></script>
+    <script src="../js/data.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+</html>
