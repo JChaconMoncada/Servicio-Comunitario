@@ -48,8 +48,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Cargar vista previa de materias
     loadMateriasPreview();
 
-    // Cargar inscripciones recientes
-    loadRecentInscriptions();
+    // Cargar inscripciones por materia
+    loadInscriptionsByMateria();
 
     // Manejo de archivo Excel
     setupFileUpload();
@@ -149,43 +149,100 @@ function editSection(materiaId, seccionId) {
     alert('Función de edición en desarrollo. Materia ID: ' + materiaId + ', Sección ID: ' + seccionId);
 }
 
-function loadRecentInscriptions() {
+function loadInscriptionsByMateria() {
     const inscripciones = DataManager.getInscripciones();
-    const container = document.getElementById('recentInscriptions');
-    
-    if (!container) return;
+    const container = document.getElementById('inscriptionsByMateria');
+    const filterSelect = document.getElementById('materiaFilter');
+
+    if (!container || !filterSelect) return;
 
     if (inscripciones.length === 0) {
         container.innerHTML = `
             <p style="color: var(--text-muted); text-align: center; padding: 40px;">
                 <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
-                No hay inscripciones recientes.
+                No hay inscripciones registradas.
             </p>
         `;
         return;
     }
 
-    // Mostrar las últimas 5 inscripciones
-    const recentInscriptions = inscripciones.slice(-5).reverse();
-    
-    let html = '<div style="display: flex; flex-direction: column; gap: 15px;">';
-    recentInscriptions.forEach(inscripcion => {
+    // Agrupar inscripciones por materia
+    const groupedByMateria = {};
+    inscripciones.forEach(inscripcion => {
+        if (inscripcion.materias && inscripcion.materias.length > 0) {
+            inscripcion.materias.forEach(materia => {
+                const materiaNombre = materia.materia;
+                if (!groupedByMateria[materiaNombre]) {
+                    groupedByMateria[materiaNombre] = [];
+                }
+                groupedByMateria[materiaNombre].push({
+                    ...inscripcion,
+                    materiaSeleccionada: materia
+                });
+            });
+        }
+    });
+
+    // Poblar el filtro
+    const materiasNombres = Object.keys(groupedByMateria).sort();
+    filterSelect.innerHTML = '<option value="">Todas las materias</option>';
+    materiasNombres.forEach(materia => {
+        filterSelect.innerHTML += `<option value="${materia}">${materia}</option>`;
+    });
+
+    // Event listener del filtro
+    filterSelect.onchange = function() {
+        renderInscriptions(groupedByMateria, this.value);
+    };
+
+    // Renderizar inicialmente todas
+    renderInscriptions(groupedByMateria, '');
+}
+
+function renderInscriptions(groupedByMateria, filterValue) {
+    const container = document.getElementById('inscriptionsByMateria');
+    if (!container) return;
+
+    const materiasToRender = filterValue
+        ? { [filterValue]: groupedByMateria[filterValue] }
+        : groupedByMateria;
+
+    if (Object.keys(materiasToRender).length === 0) {
+        container.innerHTML = `
+            <p style="color: var(--text-muted); text-align: center; padding: 40px;">
+                <i class="fas fa-search" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
+                No hay inscripciones para esta materia.
+            </p>
+        `;
+        return;
+    }
+
+    let html = '';
+    Object.keys(materiasToRender).sort().forEach(materiaNombre => {
+        const inscripciones = materiasToRender[materiaNombre];
         html += `
-            <div class="section-item">
-                <div class="section-info">
-                    <h4>${inscripcion.nombre}</h4>
-                    <p><i class="fas fa-id-card"></i> Cédula: ${inscripcion.cedula}</p>
-                    <p><i class="fas fa-envelope"></i> ${inscripcion.email}</p>
+            <div class="inscription-materia-group">
+                <div class="inscription-materia-header">
+                    <h3><i class="fas fa-book"></i> ${materiaNombre}</h3>
+                    <span class="count">${inscripciones.length} estudiante(s)</span>
                 </div>
-                <div class="section-meta">
-                    <span><i class="fas fa-calendar"></i> ${new Date(inscripcion.fecha).toLocaleDateString()}</span>
-                    <span style="color: var(--success-color);"><i class="fas fa-check-circle"></i> Completado</span>
-                </div>
+                ${inscripciones.map(inscripcion => `
+                    <div class="inscription-card">
+                        <div class="inscription-info">
+                            <h4>${inscripcion.nombre}</h4>
+                            <p><i class="fas fa-id-card"></i> Cédula: ${inscripcion.cedula}</p>
+                            <p><i class="fas fa-envelope"></i> ${inscripcion.email}</p>
+                        </div>
+                        <div class="inscription-details">
+                            <div class="materia">${inscripcion.materiaSeleccionada.materia}</div>
+                            <div class="seccion">Sección ${inscripcion.materiaSeleccionada.seccion}</div>
+                        </div>
+                    </div>
+                `).join('')}
             </div>
         `;
     });
-    html += '</div>';
-    
+
     container.innerHTML = html;
 }
 
@@ -194,28 +251,25 @@ function setupFileUpload() {
     const fileInfo = document.getElementById('fileInfo');
     const fileName = document.getElementById('fileName');
     const btnProcessExcel = document.getElementById('btnProcessExcel');
-    const importSection = document.getElementById('importSection');
+    const importDropzone = document.querySelector('.import-dropzone');
 
-    if (!fileInput) return;
+    if (!fileInput || !importDropzone) return;
 
     // Drag and drop
-    importSection.addEventListener('dragover', function(e) {
+    importDropzone.addEventListener('dragover', function(e) {
         e.preventDefault();
-        this.style.borderColor = 'var(--highlight-color)';
-        this.style.backgroundColor = 'rgba(233, 69, 96, 0.1)';
+        this.classList.add('dragover');
     });
 
-    importSection.addEventListener('dragleave', function(e) {
+    importDropzone.addEventListener('dragleave', function(e) {
         e.preventDefault();
-        this.style.borderColor = 'var(--border-color)';
-        this.style.backgroundColor = 'transparent';
+        this.classList.remove('dragover');
     });
 
-    importSection.addEventListener('drop', function(e) {
+    importDropzone.addEventListener('drop', function(e) {
         e.preventDefault();
-        this.style.borderColor = 'var(--border-color)';
-        this.style.backgroundColor = 'transparent';
-        
+        this.classList.remove('dragover');
+
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             handleFile(files[0]);
@@ -284,10 +338,11 @@ function processExcelFile() {
 
             // Guardar materias
             DataManager.saveMaterias(materias);
-            
+
             // Actualizar vista
             loadMateriasPreview();
             updateStats();
+            loadInscriptionsByMateria();
             
             Utils.hideLoading();
             alert(`Archivo procesado exitosamente. Se importaron ${materias.length} materias.`);

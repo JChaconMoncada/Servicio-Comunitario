@@ -1,3 +1,9 @@
+// Helper para leer parámetros de URL
+function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
 // Sistema de Autenticación
 const Auth = {
     // Credenciales mock (en producción esto vendría de backend)
@@ -10,6 +16,9 @@ const Auth = {
     login: function(email, password) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
+                email = (email || '').trim();
+                password = (password || '').trim();
+                console.log('Intento de login:', { email, password, expectedEmail: this.credentials.email, expectedPassword: this.credentials.password });
                 if (email === this.credentials.email && password === this.credentials.password) {
                     const session = {
                         email: email,
@@ -17,8 +26,10 @@ const Auth = {
                         isAuthenticated: true
                     };
                     Storage.set('adminSession', session);
+                    console.log('Login exitoso:', session);
                     resolve(session);
                 } else {
+                    console.log('Login fallido: credenciales incorrectas');
                     reject(new Error('Credenciales inválidas'));
                 }
             }, 1000);
@@ -46,11 +57,31 @@ const Auth = {
 // Inicialización de login form
 document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.getElementById('loginForm');
-    
+
     if (loginForm) {
+        // Pre-llenar desde parámetros de URL
+        const urlEmail = getQueryParam('email');
+        const urlPassword = getQueryParam('password');
+        const emailInput = document.getElementById('email');
+        const passwordInput = document.getElementById('password');
+
+        if (urlEmail && emailInput) {
+            emailInput.value = decodeURIComponent(urlEmail);
+        }
+        if (urlPassword && passwordInput) {
+            passwordInput.value = decodeURIComponent(urlPassword);
+        }
+
+        // Si ambos parámetros están presentes, enviar automáticamente
+        if (urlEmail && urlPassword) {
+            setTimeout(() => {
+                loginForm.dispatchEvent(new Event('submit'));
+            }, 500);
+        }
+
         loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const btnLogin = document.getElementById('btnLogin');

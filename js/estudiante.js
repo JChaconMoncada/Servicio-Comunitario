@@ -1,5 +1,12 @@
+// Helper para leer parámetros de URL
+function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+}
+
 // Lógica del flujo de estudiantes
 document.addEventListener('DOMContentLoaded', function() {
+    updateStudentHeader();
     const currentPath = window.location.pathname;
     
     if (currentPath.includes('formulario.html')) {
@@ -11,18 +18,61 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
+// Helper para mantener el departamento en navegación interna
+function getDeptParam() {
+    const slug = getQueryParam('departamento');
+    return slug ? '?departamento=' + slug : '';
+}
+
+// Actualizar header de estudiante según el departamento
+function updateStudentHeader() {
+    const slug = getQueryParam('departamento');
+    const dept = DEPARTMENT_CONFIG ? DEPARTMENT_CONFIG[slug] : null;
+    if (!dept) return;
+
+    const logoText = document.querySelector('.header .logo span');
+    if (logoText) {
+        logoText.textContent = 'Departamento de ' + dept.name;
+    }
+
+    const backBtn = document.querySelector('.header .btn-back');
+    if (backBtn) {
+        backBtn.href = '../departamentos.html';
+    }
+}
+
 // Inicializar formulario
 function initFormulario() {
     // Verificar si las inscripciones están habilitadas
     const inscripcionesHabilitadas = DataManager.getInscripcionesState();
     const systemAlert = document.getElementById('systemAlert');
-    
+    const formCard = document.getElementById('formCard');
+
+    console.log('Estado de inscripciones:', inscripcionesHabilitadas);
+    console.log('Departamento actual:', DataManager.getDepartmentSlug());
+    console.log('Clave localStorage:', DataManager.key('inscripcionesHabilitadas'));
+    console.log('Valor en localStorage:', localStorage.getItem(DataManager.key('inscripcionesHabilitadas')));
+
+    // Ocultar alerta por defecto
+    if (systemAlert) {
+        systemAlert.style.display = 'none';
+    }
+
     if (!inscripcionesHabilitadas) {
+        console.log('Inscripciones deshabilitadas, mostrando alerta');
         if (systemAlert) {
             systemAlert.style.display = 'block';
         }
-        document.getElementById('studentForm').style.display = 'none';
+        if (formCard) {
+            formCard.style.display = 'none';
+        }
         return;
+    }
+
+    console.log('Inscripciones habilitadas, mostrando formulario');
+    // Mostrar el formulario si las inscripciones están habilitadas
+    if (formCard) {
+        formCard.style.display = 'block';
     }
 
     // Verificar si ya hay datos del estudiante
@@ -30,11 +80,11 @@ function initFormulario() {
     if (existingData) {
         // Si ya está verificado, redirigir a materias
         if (DataManager.isStudentVerified()) {
-            Navigation.redirect('materias.html');
+            Navigation.redirect('materias.html' + getDeptParam());
             return;
         }
         // Si no está verificado, redirigir a verificación
-        Navigation.redirect('verificacion.html');
+        Navigation.redirect('verificacion.html' + getDeptParam());
         return;
     }
 
@@ -42,6 +92,50 @@ function initFormulario() {
     const form = document.getElementById('studentForm');
     if (form) {
         form.addEventListener('submit', handleFormSubmit);
+    }
+
+    // Pre-llenar "V-" en el input de cédula
+    const cedulaInput = document.getElementById('cedula');
+    if (cedulaInput) {
+        cedulaInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.value = 'V-';
+            }
+        });
+
+        cedulaInput.addEventListener('input', function() {
+            if (!this.value.startsWith('V-') && !this.value.startsWith('E-')) {
+                this.value = 'V-' + this.value;
+            }
+        });
+
+        cedulaInput.addEventListener('blur', function() {
+            if (this.value === 'V-') {
+                this.value = '';
+            }
+        });
+    }
+
+    // Pre-llenar "+58 " en el input de teléfono
+    const telefonoInput = document.getElementById('telefono');
+    if (telefonoInput) {
+        telefonoInput.addEventListener('focus', function() {
+            if (!this.value) {
+                this.value = '+58 ';
+            }
+        });
+
+        telefonoInput.addEventListener('input', function() {
+            if (!this.value.startsWith('+58 ')) {
+                this.value = '+58 ' + this.value.replace('+58', '').replace('+58 ', '');
+            }
+        });
+
+        telefonoInput.addEventListener('blur', function() {
+            if (this.value === '+58 ' || this.value === '+58') {
+                this.value = '';
+            }
+        });
     }
 }
 
@@ -108,7 +202,7 @@ async function handleFormSubmit(e) {
     alert(`Código de verificación enviado a ${email}. Para testing, el código es: ${otp}`);
     
     // Redirigir a verificación
-    Navigation.redirect('verificacion.html');
+    Navigation.redirect('verificacion.html' + getDeptParam());
 }
 
 // Inicializar verificación
@@ -116,13 +210,13 @@ function initVerificacion() {
     // Verificar si hay datos del estudiante
     const studentData = DataManager.getStudentData();
     if (!studentData) {
-        Navigation.redirect('formulario.html');
+        Navigation.redirect('formulario.html' + getDeptParam());
         return;
     }
     
     // Si ya está verificado, redirigir a materias
     if (DataManager.isStudentVerified()) {
-        Navigation.redirect('materias.html');
+        Navigation.redirect('materias.html' + getDeptParam());
         return;
     }
     
@@ -201,7 +295,7 @@ async function handleOTPVerification(e) {
         
         Utils.showLoading();
         setTimeout(() => {
-            Navigation.redirect('materias.html');
+            Navigation.redirect('materias.html' + getDeptParam());
         }, 1000);
     } else {
         alert('Código incorrecto. Por favor, intenta nuevamente.');
@@ -274,7 +368,7 @@ function setupResend() {
 function initMaterias() {
     // Verificar si el estudiante está verificado
     if (!DataManager.isStudentVerified()) {
-        Navigation.redirect('formulario.html');
+        Navigation.redirect('formulario.html' + getDeptParam());
         return;
     }
     
@@ -316,6 +410,11 @@ function initMaterias() {
 
 // Filtrar materias por semestre (lógica de prerrequisitos)
 function filterMateriasBySemestre(materias, semestre) {
+    // Para departamentos distintos a Matemática/Física, mostrar todas las materias
+    if (DataManager.getDepartmentSlug() !== 'matematica-fisica') {
+        return materias;
+    }
+
     // Lógica simple: Matemática I para semestre 1-2, II para 3-4, III para 5-6, IV para 7-8
     return materias.filter(materia => {
         if (materia.nombre.includes('I') && !materia.nombre.includes('II') && !materia.nombre.includes('III') && !materia.nombre.includes('IV')) {
@@ -357,7 +456,7 @@ function loadMaterias() {
         grid.innerHTML = `
             <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: var(--text-muted);">
                 <i class="fas fa-info-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                <p>No hay materias disponibles para tu semestre actual. Contacta al departamento de matemática para más información.</p>
+                <p>No hay materias disponibles para tu semestre actual. Contacta al departamento para más información.</p>
             </div>
         `;
         return;
@@ -383,7 +482,7 @@ function loadMaterias() {
                                 <p><i class="fas fa-users"></i> Cupo: ${seccion.cupo}</p>
                             </div>
                             <div class="seccion-select">
-                                <input type="radio" name="materia-${materia.id}" value="${seccion.id}" data-materia="${materia.nombre}" data-seccion="${seccion.seccion}" data-profesor="${seccion.profesor}" data-horario="${seccion.horario}">
+                                <input type="checkbox" value="${seccion.id}" data-materia="${materia.nombre}" data-seccion="${seccion.seccion}" data-profesor="${seccion.profesor}" data-horario="${seccion.horario}">
                                 <label>Seleccionar esta sección</label>
                             </div>
                         </div>
@@ -392,33 +491,44 @@ function loadMaterias() {
             </div>
         `;
     });
-    
+
     grid.innerHTML = html;
-    
-    // Agregar event listeners a los radio buttons
-    const radioButtons = grid.querySelectorAll('input[type="radio"]');
-    radioButtons.forEach(radio => {
-        radio.addEventListener('change', updateSelectionSummary);
+
+    // Agregar event listeners a los checkboxes
+    const checkboxes = grid.querySelectorAll('input[type="checkbox"]');
+    checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelectionSummary);
     });
 }
 
 // Actualizar resumen de selección
 function updateSelectionSummary() {
     const selected = [];
-    const radioButtons = document.querySelectorAll('input[type="radio"]:checked');
-    
-    radioButtons.forEach(radio => {
-        selected.push({
-            materia: radio.dataset.materia,
-            seccion: radio.dataset.seccion,
-            profesor: radio.dataset.profesor,
-            horario: radio.dataset.horario
-        });
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]:checked');
+
+    // Remover clase selected de todos los items
+    document.querySelectorAll('.seccion-item').forEach(item => {
+        item.classList.remove('selected');
     });
-    
+
+    checkboxes.forEach(checkbox => {
+        selected.push({
+            materia: checkbox.dataset.materia,
+            seccion: checkbox.dataset.seccion,
+            profesor: checkbox.dataset.profesor,
+            horario: checkbox.dataset.horario
+        });
+
+        // Agregar clase selected al item seleccionado
+        const seccionItem = checkbox.closest('.seccion-item');
+        if (seccionItem) {
+            seccionItem.classList.add('selected');
+        }
+    });
+
     const summaryList = document.getElementById('summaryList');
     const btnConfirm = document.getElementById('btnConfirm');
-    
+
     if (selected.length === 0) {
         summaryList.innerHTML = '<li style="color: var(--text-muted); text-align: center;">No has seleccionado ninguna materia</li>';
         btnConfirm.disabled = true;
@@ -486,27 +596,27 @@ async function handleConfirmInscription() {
 // Mostrar página de éxito
 function showSuccessPage(inscripcion) {
     const materiasSection = document.querySelector('.materias-section');
-    
+
     if (materiasSection) {
         materiasSection.innerHTML = `
             <div class="success-section">
                 <div class="success-card">
-                    <i class="fas fa-check-circle"></i>
-                    <h1>¡Inscripción Exitosa!</h1>
-                    <p>Tu inscripción ha sido procesada correctamente. A continuación encontrarás el resumen de tu inscripción.</p>
-                    
+                    <i class="fas fa-clock"></i>
+                    <h1>Inscripción Enviada</h1>
+                    <p>Tu inscripción ha sido enviada y está en espera de aprobación por el departamento. Te llamaremos para que vengas a la universidad a confirmar tu inscripción.</p>
+
                     <div class="success-details">
                         <p><strong>Estudiante:</strong> ${inscripcion.nombre}</p>
                         <p><strong>Cédula:</strong> ${inscripcion.cedula}</p>
                         <p><strong>Correo:</strong> ${inscripcion.email}</p>
                         <p><strong>Fecha:</strong> ${new Date(inscripcion.fecha).toLocaleString()}</p>
                         <hr style="margin: 15px 0; border: none; border-top: 1px solid var(--border-color);">
-                        <p><strong>Materias inscritas:</strong></p>
+                        <p><strong>Materias solicitadas:</strong></p>
                         ${inscripcion.materias.map(m => `
                             <p style="margin-left: 20px;">• ${m.materia} - Sección ${m.seccion} (${m.horario})</p>
                         `).join('')}
                     </div>
-                    
+
                     <a href="../index.html" class="btn btn-primary">
                         <i class="fas fa-home"></i>
                         Volver al Inicio

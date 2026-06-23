@@ -77,7 +77,6 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <i class="fas fa-toggle-on"></i>
                     <div class="stat-card-content">
                         <h3>Estado del Sistema</h3>
                         <p id="systemStatus">Deshabilitado</p>
@@ -106,18 +105,25 @@
 
             <!-- Import Excel -->
             <div class="dashboard-section-card">
-                <h2><i class="fas fa-file-excel"></i> Importar Datos de Materias</h2>
+                <h2><i class="fas fa-file-excel"></i> Cargar Materias</h2>
                 <div class="import-section" id="importSection">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    <p>Arrastra tu archivo Excel aquí o haz clic para seleccionar</p>
-                    <p style="font-size: 0.85rem; color: var(--text-muted);">
-                        El archivo debe contener las columnas: materia, profesor, sección, cupo, horario
-                    </p>
-                    <input type="file" id="fileInput" class="file-input" accept=".xlsx, .xls">
-                    <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
-                        <i class="fas fa-folder-open"></i>
-                        Seleccionar Archivo
-                    </button>
+                    <div class="import-instructions">
+                        <h3><i class="fas fa-info-circle"></i> ¿Cómo cargar las materias?</h3>
+                        <ol>
+                            <li>Prepara un archivo Excel con las columnas: <strong>materia</strong>, <strong>profesor</strong>, <strong>sección</strong>, <strong>cupo</strong>, <strong>horario</strong></li>
+                            <li>Arrastra el archivo aquí o haz clic en "Seleccionar Archivo"</li>
+                            <li>Verifica la vista previa antes de confirmar</li>
+                        </ol>
+                    </div>
+                    <div class="import-dropzone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Arrastra tu archivo Excel aquí o haz clic para seleccionar</p>
+                        <input type="file" id="fileInput" class="file-input" accept=".xlsx, .xls">
+                        <button class="btn-upload" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-folder-open"></i>
+                            Seleccionar Archivo
+                        </button>
+                    </div>
                 </div>
                 <div id="fileInfo" style="display: none; margin-top: 15px; padding: 15px; background-color: var(--bg-light); border-radius: var(--radius);">
                     <p><strong>Archivo seleccionado:</strong> <span id="fileName"></span></p>
@@ -139,13 +145,19 @@
                 </div>
             </div>
 
-            <!-- Inscripciones Recientes -->
+            <!-- Inscripciones por Materia -->
             <div class="dashboard-section-card">
-                <h2><i class="fas fa-history"></i> Inscripciones Recientes</h2>
-                <div id="recentInscriptions">
+                <h2><i class="fas fa-users"></i> Inscripciones por Materia</h2>
+                <div class="filter-section">
+                    <label for="materiaFilter"><i class="fas fa-filter"></i> Filtrar por materia:</label>
+                    <select id="materiaFilter" class="filter-select">
+                        <option value="">Todas las materias</option>
+                    </select>
+                </div>
+                <div id="inscriptionsByMateria">
                     <p style="color: var(--text-muted); text-align: center; padding: 40px;">
                         <i class="fas fa-inbox" style="font-size: 2rem; margin-bottom: 15px;"></i><br>
-                        No hay inscripciones recientes.
+                        No hay inscripciones registradas.
                     </p>
                 </div>
             </div>
